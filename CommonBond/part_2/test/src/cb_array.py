@@ -21,8 +21,8 @@ class CBArray:
             raise Exception('Unsupported data type')
 
         if content:
-            if None in content:
-                raise Exception('\'None\' exists in the given list')
+            if type(content) != list:
+                raise Exception('Input should be list')
             if dtype:
                 if not all(isinstance(x, dtype) for x in content):
                     if dtype == float and all(isinstance(x, int) for x in content):
@@ -96,7 +96,7 @@ class CBArray:
         :param value: Element to insert.
         """
         if idx < 0 or idx > len(self.arr):
-            raise Exception('Can not insert value at this inded')
+            raise Exception('Can not insert value at this index')
         if type(value) != self.arr_type:
             if not (isinstance(value, int) and self.arr_type == float): 
                 raise Exception('input value is not of the same type.')
@@ -134,8 +134,9 @@ class CBArray:
         """
         if type(value) != self.arr_type:
             if not (isinstance(value, int) and self.arr_type == float): 
-                raise Exception('input value is not of the same type.')       
-        self.arr = list(filter(lambda a: a != value, self.arr))
+                raise Exception('input value is not of the same type.')
+        self.arr = [a for a in self.arr if a != value]
+#        self.arr = list(filter(lambda a: a != value, self.arr))
         if value == self.min:
             if self.arr:
                 self.min = min(self.arr)
@@ -173,10 +174,9 @@ class CBArray:
     
     def __getitem__(self, key):
         sub_arr = self.arr[key]
-        try:
-            _ = len(sub_arr)
+        if type(sub_arr) == list:
             return CBArray(sub_arr, self.arr_type)
-        except:
+        else:
             return self.arr[key]
     
     
